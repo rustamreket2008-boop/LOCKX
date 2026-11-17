@@ -2,6 +2,7 @@ package com.lockx.app;
 
 import android.os.Bundle;
 import android.graphics.Color;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.view.Gravity;
 import android.widget.Button;
@@ -45,23 +46,38 @@ public class MainActivity extends AppCompatActivity {
         subtitle.setGravity(Gravity.CENTER);
 
         LinearLayout.LayoutParams subParams =
-            new LinearLayout.LayoutParams(
-                -1, -2
-            );
+            new LinearLayout.LayoutParams(-1, -2);
         subParams.topMargin = dp(10);
         root.addView(subtitle, subParams);
 
         addSpace(root, 45);
 
-        addButton(root, "Мои приложения");
-        addButton(root, "Настройки защиты");
-        addButton(root, "Настройки");
-        addButton(root, "О приложении");
+        addButton(root, "Мои приложения", () -> {
+            startActivity(
+                new Intent(this, AppListActivity.class)
+            );
+        });
+
+        addButton(root, "Настройки защиты", () ->
+            showMessage("Раздел скоро будет доступен")
+        );
+
+        addButton(root, "Настройки", () ->
+            showMessage("Раздел скоро будет доступен")
+        );
+
+        addButton(root, "О приложении", () ->
+            showMessage("LOCKX — защита приложений")
+        );
 
         setContentView(root);
     }
 
-    private void addButton(LinearLayout root, String text) {
+    private void addButton(
+        LinearLayout root,
+        String text,
+        Runnable action
+    ) {
         Button button = new Button(this);
         button.setText(text);
         button.setTextSize(16);
@@ -72,21 +88,19 @@ public class MainActivity extends AppCompatActivity {
         );
 
         LinearLayout.LayoutParams params =
-            new LinearLayout.LayoutParams(
-                -1, dp(55)
-            );
-
+            new LinearLayout.LayoutParams(-1, dp(55));
         params.topMargin = dp(14);
 
         root.addView(button, params);
+        button.setOnClickListener(v -> action.run());
+    }
 
-        button.setOnClickListener(v ->
-            Toast.makeText(
-                this,
-                "Этот раздел скоро будет доступен",
-                Toast.LENGTH_SHORT
-            ).show()
-        );
+    private void showMessage(String message) {
+        Toast.makeText(
+            this,
+            message,
+            Toast.LENGTH_SHORT
+        ).show();
     }
 
     private void addSpace(LinearLayout root, int height) {
@@ -99,8 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
     private int dp(int value) {
         return (int) (
-            value * getResources()
-                .getDisplayMetrics().density
+            value * getResources().getDisplayMetrics().density
         );
     }
 }
